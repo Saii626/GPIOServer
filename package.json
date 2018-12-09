@@ -1,0 +1,32 @@
+{
+  "name": "gpioserver",
+  "version": "1.0.0",
+  "description": "Node Server for controlling raspberry's gpio",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saii626/GPIOServer.git"
+  },
+  "keywords": [
+    "node",
+    "gpio"
+  ],
+  "author": "Saii",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Saii626/GPIOServer/issues"
+  },
+  "homepage": "https://github.com/Saii626/GPIOServer#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "request": "^2.88.0",
+    "rpio": "^0.9.23"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.4.2"
+  }
+}
