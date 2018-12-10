@@ -19,12 +19,14 @@ function stop(rpio, params) {
 }
 
 function info() {
-  return `Request body template
-{
-  pin: Number (optional, default value 12),
-  timeout: Number (optional, timeout in miliseconds, default value 1000)
-}
-  `
+  return {
+    name: 'blink',
+    requestOptions: {
+      pin: 'Number(optional, default value 12)',
+      timeout: 'Number(optional, timeout in miliseconds, default value 1000)'
+    },
+    working: 'Repeatedly toggles pin from HIGH to LOW after each timeout interval'
+  }
 }
 
 function restart(rpio, params) {
