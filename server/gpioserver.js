@@ -81,6 +81,9 @@ function registerSelf() {
 }
 
 httpServer.listen(process.env.PORT || 8040, function() {
-  // registerSelf();
+
+  if (process.env.NODE_ENV === 'production') {
+    registerSelf();
+  }
   console.log("Server started on port: " + httpServer.address().port);
 });

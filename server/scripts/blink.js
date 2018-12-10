@@ -1,20 +1,35 @@
 var pin = -1;
-var isRunning = false;
+var eventLoop = null;
 
 function start(rpio, params) {
-  if (pin != -1) {
-    restart(rpio, params);
+  if (eventLoop !== null) {
+    stop(rpio, params);
+    setTimeout(start, 1000, rpio, params);
     return 'Restarting';
   }
   pin = params.pin || 12;
   rpio.open(pin, rpio.OUTPUT, rpio.LOW);
-  isRunning = true;
-  loop(rpio, params.timeout);
+
+  //Loop
+  let interval = params.timeout || 1000;
+  eventLoop = setInterval(() => {
+    rpio.write(pin, rpio.HIGH);
+    console.log('high');
+    setTimeout(() => {
+      rpio.write(pin, rpio.LOW);
+      console.log('low');
+    }, interval);
+  }, 2 * interval);
   return 'Starting';
 }
 
 function stop(rpio, params) {
-  isRunning = false;
+  if (eventLoop !== null) {
+    clearInterval(eventLoop);
+    rpio.close(pin);
+    pin = -1;
+    eventLoop = null;
+  }
   return 'Stopping'
 }
 
@@ -27,30 +42,6 @@ function info() {
     },
     working: 'Repeatedly toggles pin from HIGH to LOW after each timeout interval'
   }
-}
-
-function restart(rpio, params) {
-  stop(rpio, params);
-  setTimeout(() => {
-    run(rpio, params)
-  }, 3 * (params.timeout || 1000));
-}
-
-function loop(rpio, timeout) {
-  interval = timeout || 1000;
-  setInterval(() => {
-    if (isRunning) {
-      rpio.write(pin, rpio.HIGH);
-      console.log('high');
-      setTimeout(() => {
-        rpio.write(pin, rpio.LOW);
-        console.log('low');
-      }, interval);
-    } else {
-      rpio.close(pin);
-      pin = -1;
-    }
-  }, 2 * interval);
 }
 
 module.exports = {
