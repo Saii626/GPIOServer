@@ -36,11 +36,7 @@ let timeLoop = setInterval(() => {
 
   let timeShow = "  " + hour + ":" + min + ":" + sec + "  " + month + " " + day;
 
-  let sendObj = {
-    command: 'display',
-    args: [timeShow, 1]
-  }
-  pythonProcess.send(JSON.stringify(sendObj));
+  showMsg(timeShow, 1);
 }, 300);
 
 pythonProcess.on('message', (msg) => {
@@ -51,14 +47,27 @@ function health() {
   return currentHealth;
 }
 
+function info() {
+  return {
+    name: 'lcd',
+    requestOptions: {
+      msg: 'String (message to show on the screen, required)',
+      line: 'Number(on which line(1-4) message will be shown, required)'
+    },
+    working: 'Shows the string on specified line'
+  }
+}
+
 function displayMsg(rpio, params) {
+  if (params.msgs) {
+    for (msg of params.msgs) {
+      displayMsg(rpio, msg);
+    }
+    return;
+  }
   if (params.msg && params.line) {
     if (validLines.indexOf(parseInt(params.line)) > -1) {
-      let sendObj = {
-        command: 'display',
-        args: [params.msg, parseInt(params.line)]
-      }
-      pythonProcess.send(JSON.stringify(sendObj));
+      showMsg(params.msg, params.line);
       return {
         status: 'Success'
       };
@@ -75,7 +84,59 @@ function displayMsg(rpio, params) {
     }
   }
 }
+
+function flashMsg(rpio, params) {
+  if (params.msgs) {
+    for (msg of params.msgs) {
+      flashMsg(rpio, msg);
+    }
+    return;
+  }
+  displayMsg(rpio, params);
+  setTimeout(clearLine, params.timeout || 5000, rpio, params)
+}
+
+function clearLine(rpio, params) {
+  if (params.line && validLines.indexOf(parseInt(params.line)) > -1) {
+    showMsg('', params.line);
+    return {
+      status: 'Success'
+    };
+  } else {
+    return {
+      error: 'error',
+      reason: 'Line must be present and should have value in between 1-4 inclusive'
+    };
+  }
+}
+
+function clear() {
+  let sendObj = {
+    command: 'clear'
+  }
+  pythonProcess.send(JSON.stringify(sendObj));
+}
+
+function showMsg(msg, line) {
+  if (msg.length < 20) {
+    let remaingLength = 20 - msg.length;
+    msgToShow = msg.concat(' '.repeat(remaingLength));
+  } else {
+    msgToShow = msg.substr(0, 20);
+  }
+  let sendObj = {
+    command: 'display',
+    args: [msgToShow, parseInt(line)]
+  }
+  pythonProcess.send(JSON.stringify(sendObj));
+}
+
+
 module.exports = {
   health: health,
-  displayMsg: displayMsg
+  info: info,
+  displayMsg: displayMsg,
+  flashMsg: flashMsg,
+  clearLine: clearLine,
+  clear: clear
 }
