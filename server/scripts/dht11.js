@@ -7,7 +7,11 @@ var options = {
   args: ['21']
 }
 
-var isErred = false;
+var currentHealth = {
+  status: 'healthy',
+  error: null
+};
+
 var currentData = {
   time: 0,
   temperature: 0,
@@ -16,8 +20,8 @@ var currentData = {
 
 let pythonProcess = pythonShell.PythonShell.run('dht11_interface.py', options, (err) => {
   if (err) {
-    console.error(err);
-    isErred = true;
+    currentHealth.status = 'error';
+    currentHealth.error = err;
   }
 });
 
@@ -26,7 +30,7 @@ pythonProcess.on('message', (msg) => {
 });
 
 function health() {
-  return isErred ? 'Error occured' : 'Healthy';
+  return currentHealth;
 }
 
 function data(rpio, params) {
