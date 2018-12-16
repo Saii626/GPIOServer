@@ -1,5 +1,6 @@
 const pythonShell = require('python-shell');
 const path = require('path');
+const request = require('request');
 
 var options = {
   mode: 'json',
@@ -27,6 +28,20 @@ let pythonProcess = pythonShell.PythonShell.run('dht11_interface.py', options, (
 
 pythonProcess.on('message', (msg) => {
   currentData = msg;
+
+  let postMsg = 'Temp: ' + currentData.temperature + 'C  Humd: ' + currentData.humidity + '%'
+
+  const postData = {
+    msg: postMsg,
+    line: 2
+  }
+  request.post('http://localhost:8040/lcd/displayMsg', {
+    json: postData
+  }, function(err, res, body) {
+    if (err) {
+      console.error(err);
+    }
+  });
 });
 
 function health() {

@@ -4,6 +4,7 @@ const path = require('path');
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 ];
+const validLines = [1, 2, 3, 4]
 
 var options = {
   mode: 'text',
@@ -50,6 +51,31 @@ function health() {
   return currentHealth;
 }
 
+function displayMsg(rpio, params) {
+  if (params.msg && params.line) {
+    if (validLines.indexOf(parseInt(params.line)) > -1) {
+      let sendObj = {
+        command: 'display',
+        args: [params.msg, parseInt(params.line)]
+      }
+      pythonProcess.send(JSON.stringify(sendObj));
+      return {
+        status: 'Success'
+      };
+    } else {
+      return {
+        error: 'error',
+        reason: 'Line must be in between 1-4 inclusive'
+      };
+    }
+  } else {
+    return {
+      error: 'error',
+      reason: 'Must have msg and line in req body'
+    }
+  }
+}
 module.exports = {
-  health: health
+  health: health,
+  displayMsg: displayMsg
 }
