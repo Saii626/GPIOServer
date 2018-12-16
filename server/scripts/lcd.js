@@ -6,6 +6,10 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 ];
 const validLines = [1, 2, 3, 4]
 
+let displayLoop = {
+  flashMsg: []
+}
+
 var options = {
   mode: 'text',
   scriptPath: path.join(__dirname, '../i2c')
@@ -39,6 +43,35 @@ let timeLoop = setInterval(() => {
   showMsg(timeShow, 1);
 }, 300);
 
+let msgLoop = setInterval(() => {
+    let msgObject = {};
+    if (displayLoop.flashMsg && displayLoop.flashMsg.length > 0) {
+      msgObject = displayLoop.flashMsg[0];
+      msgObject.timeout = msgObject.timeout || 5000;
+      if (msgObject.timeout < 250) {
+        displayLoop.flashMsg.shift();
+      } else {
+        msgObject.timeout = msgObject.timeout - 500;
+      }
+    } else if (displayLoop.permaMsg) {
+      msgObject = displayLoop.permaMsg
+    }
+
+    if (!msgObject || msgObject.length <= 0) {
+      msgObject.msg = ''
+      msgObject.lines = [3, 4]
+    }
+
+    if (msgObject.lines) {
+      for (var line of lines) {
+        showMsg('', line);
+      }
+    } else {
+      showMsg(msgObject.msg, msgObject.line)
+    }
+  },
+  500);
+
 pythonProcess.on('message', (msg) => {
   console.log(msg);
 })
@@ -67,7 +100,7 @@ function displayMsg(rpio, params) {
   }
   if (params.msg && params.line) {
     if (validLines.indexOf(parseInt(params.line)) > -1) {
-      showMsg(params.msg, params.line);
+      displayLoop.permaMsg = params
       return {
         status: 'Success'
       };
@@ -92,8 +125,7 @@ function flashMsg(rpio, params) {
     }
     return;
   }
-  displayMsg(rpio, params);
-  setTimeout(clearLine, params.timeout || 5000, rpio, params)
+  displayLoop.flashMsg.push(params);
 }
 
 function clearLine(rpio, params) {
@@ -118,6 +150,7 @@ function clear() {
 }
 
 function showMsg(msg, line) {
+  let msgToShow;
   if (msg.length < 20) {
     let remaingLength = 20 - msg.length;
     msgToShow = msg.concat(' '.repeat(remaingLength));
@@ -130,7 +163,6 @@ function showMsg(msg, line) {
   }
   pythonProcess.send(JSON.stringify(sendObj));
 }
-
 
 module.exports = {
   health: health,
