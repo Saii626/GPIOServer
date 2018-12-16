@@ -79,6 +79,11 @@ function displayMsg(rpio, params) {
   }
 }
 
+function flashMsg(rpio, params) {
+  displayMsg(rpio, params);
+  setTimeout(clearLine, params.timeout || 5000, rpio, params)
+}
+
 function clearLine(rpio, params) {
   if (params.line && validLines.indexOf(parseInt(params.line)) > -1) {
     showMsg('', params.line);
@@ -119,6 +124,7 @@ module.exports = {
   health: health,
   info: info,
   displayMsg: displayMsg,
+  flashMsg: flashMsg,
   clearLine: clearLine,
   clear: clear
 }
