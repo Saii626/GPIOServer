@@ -1,5 +1,5 @@
 import I2C_LCD_driver
-from time import *
+import time
 import sys
 import json
 
@@ -22,7 +22,10 @@ def clear():
 
 while True:
     commandObj = json.loads(sys.stdin.readline())
-    if commandObj["command"] == "display":
-        display(commandObj["args"][0], int(commandObj["args"][1]))
-    elif commandObj["command"] == "clear":
-        clear()
+    if "command" in commandObj:
+        if commandObj["command"] == "display":
+            display(commandObj["args"][0], int(commandObj["args"][1]))
+        elif commandObj["command"] == "clear":
+            clear()
+    else:
+        time.sleep(0.1)
