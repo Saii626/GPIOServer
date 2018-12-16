@@ -59,6 +59,12 @@ function info() {
 }
 
 function displayMsg(rpio, params) {
+  if (params.msgs) {
+    for (msg of params.msgs) {
+      displayMsg(rpio, msg);
+    }
+    return;
+  }
   if (params.msg && params.line) {
     if (validLines.indexOf(parseInt(params.line)) > -1) {
       showMsg(params.msg, params.line);
@@ -80,6 +86,12 @@ function displayMsg(rpio, params) {
 }
 
 function flashMsg(rpio, params) {
+  if (params.msgs) {
+    for (msg of params.msgs) {
+      flashMsg(rpio, msg);
+    }
+    return;
+  }
   displayMsg(rpio, params);
   setTimeout(clearLine, params.timeout || 5000, rpio, params)
 }
