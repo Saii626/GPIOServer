@@ -85,17 +85,20 @@ function special() {
 
   let str = 'Hi Mansi            ';
   let i = 0;
-  var stringToShow;
+  let stringToShow;
   setInterval(() => {
     stringToShow = ' '.repeat(i)
-    stringToShow.concat(str);
-    stringToShow.substr(0, 20);
-    i = i == 20 ? 0 : i + 1;
+    stringToShow = stringToShow.concat(str);
+    stringToShow = stringToShow.substr(0, 20);
 
+console.log(stringToShow);
+    i = i == 20 ? 0 : i + 1;
+console.log(i);
     let sendObj = {
       command: 'display',
       args: [stringToShow, 3]
     }
+console.log(sendObj);
     pythonProcess.send(JSON.stringify(sendObj));
   }, 1000)
 }
