@@ -75,7 +75,33 @@ function displayMsg(rpio, params) {
     }
   }
 }
+
+function special() {
+  let sendObj = {
+    command: 'display',
+    args: ['Pretty cool, right?', 4]
+  }
+  pythonProcess.send(JSON.stringify(sendObj));
+
+  let str = 'Hi Mansi            ';
+  let i = 0;
+  var stringToShow;
+  setInterval(() => {
+    stringToShow = ' '.repeat(i)
+    stringToShow.concat(str);
+    stringToShow.substr(0, 20);
+    i = i == 20 ? 0 : i + 1;
+
+    let sendObj = {
+      command: 'display',
+      args: [stringToShow, 3]
+    }
+    pythonProcess.send(JSON.stringify(sendObj));
+  }, 1000)
+}
+
 module.exports = {
   health: health,
-  displayMsg: displayMsg
+  displayMsg: displayMsg,
+  special: special
 }
