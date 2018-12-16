@@ -75,7 +75,15 @@ function displayMsg(rpio, params) {
     }
   }
 }
+
+function clear() {
+  let sendObj = {
+    command: 'clear'
+  }
+  pythonProcess.send(JSON.stringify(sendObj));
+}
 module.exports = {
   health: health,
-  displayMsg: displayMsg
+  displayMsg: displayMsg,
+  clear: clear
 }
