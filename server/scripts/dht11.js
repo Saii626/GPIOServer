@@ -52,7 +52,15 @@ function data(rpio, params) {
   return currentData;
 }
 
+function info() {
+  return {
+    name: 'dht11',
+    working: 'Returns currentData. It contains temperature, humidity and timestamp'
+  }
+}
+
 module.exports = {
   health: health,
-  data: data
+  data: data,
+  info: info
 }

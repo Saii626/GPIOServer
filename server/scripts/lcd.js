@@ -36,11 +36,7 @@ let timeLoop = setInterval(() => {
 
   let timeShow = "  " + hour + ":" + min + ":" + sec + "  " + month + " " + day;
 
-  let sendObj = {
-    command: 'display',
-    args: [timeShow, 1]
-  }
-  pythonProcess.send(JSON.stringify(sendObj));
+  showMsg(timeShow, 1);
 }, 300);
 
 pythonProcess.on('message', (msg) => {
@@ -51,14 +47,21 @@ function health() {
   return currentHealth;
 }
 
+function info() {
+  return {
+    name: 'lcd',
+    requestOptions: {
+      msg: 'String (message to show on the screen, required)',
+      line: 'Number(on which line(1-4) message will be shown, required)'
+    },
+    working: 'Shows the string on specified line'
+  }
+}
+
 function displayMsg(rpio, params) {
   if (params.msg && params.line) {
     if (validLines.indexOf(parseInt(params.line)) > -1) {
-      let sendObj = {
-        command: 'display',
-        args: [params.msg, parseInt(params.line)]
-      }
-      pythonProcess.send(JSON.stringify(sendObj));
+      showMsg(params.msg, params.line);
       return {
         status: 'Success'
       };
@@ -82,8 +85,20 @@ function clear() {
   }
   pythonProcess.send(JSON.stringify(sendObj));
 }
+
+function showMsg(msg, line) {
+  msgToShow = msg.substr(0, 20);
+  let sendObj = {
+    command: 'display',
+    args: [msgToShow, parseInt(line)]
+  }
+  pythonProcess.send(JSON.stringify(sendObj));
+}
+
+
 module.exports = {
   health: health,
+  info: info,
   displayMsg: displayMsg,
   clear: clear
 }
