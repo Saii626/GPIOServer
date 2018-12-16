@@ -79,6 +79,20 @@ function displayMsg(rpio, params) {
   }
 }
 
+function clearLine(rpio, params) {
+  if (params.line && validLines.indexOf(parseInt(params.line)) > -1) {
+    showMsg('', params.line);
+    return {
+      status: 'Success'
+    };
+  } else {
+    return {
+      error: 'error',
+      reason: 'Line must be present and should have value in between 1-4 inclusive'
+    };
+  }
+}
+
 function clear() {
   let sendObj = {
     command: 'clear'
@@ -87,7 +101,12 @@ function clear() {
 }
 
 function showMsg(msg, line) {
-  msgToShow = msg.substr(0, 20);
+  if (msg.length < 20) {
+    let remaingLength = 20 - msg.length;
+    msgToShow = msg.concat(' '.repeat(remaingLength));
+  } else {
+    msgToShow = msg.substr(0, 20);
+  }
   let sendObj = {
     command: 'display',
     args: [msgToShow, parseInt(line)]
@@ -100,5 +119,6 @@ module.exports = {
   health: health,
   info: info,
   displayMsg: displayMsg,
+  clearLine: clearLine,
   clear: clear
 }
