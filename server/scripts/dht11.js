@@ -32,10 +32,9 @@ pythonProcess.on('message', (msg) => {
   let postMsg = 'Temp: ' + currentData.temperature + 'C  Humd: ' + currentData.humidity + '%'
 
   const postData = {
-    msg: postMsg,
-    line: 2
+    line: postMsg
   }
-  request.post('http://localhost:8040/lcd/displayMsg', {
+  request.post('http://localhost:8040/lcd/displayLine', {
     json: postData
   }, function(err, res, body) {
     if (err) {
