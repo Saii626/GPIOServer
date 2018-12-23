@@ -52,10 +52,8 @@ function showNews() {
     let newsToShow = newsList.shift();
 
     let postData = {
-      msg: {
-        msg: newsToShow.news,
-        duration: 4
-      }
+      msg: newsToShow.news,
+      duration: 4
     }
     request.post('http://localhost:8040/lcd/displayMsg', {
       json: postData

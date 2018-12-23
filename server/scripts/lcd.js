@@ -1,6 +1,7 @@
 const pythonShell = require('python-shell');
 const path = require('path');
 const request = require('request');
+const moment = require('moment');
 
 var options = {
   mode: 'text',
@@ -15,29 +16,12 @@ var currentHealth = {
 let pythonProcess = new pythonShell.PythonShell('lcd_interface.py', options);
 
 // Line 1 : Date and Time
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-];
 let timeLoop = setInterval(() => {
-  let date = new Date();
-  let hour = date.getHours();
-  hour = (hour < 10 ? "0" : "") + hour;
 
-  let min = date.getMinutes();
-  min = (min < 10 ? "0" : "") + min;
-
-  let sec = date.getSeconds();
-  sec = (sec < 10 ? "0" : "") + sec;
-
-  let month = monthNames[date.getMonth()];
-
-  let day = date.getDate();
-  day = (day < 10 ? "0" : "") + day;
-
-  let timeShow = "  " + hour + ":" + min + ":" + sec + "  " + month + " " + day;
-
-  showMsg(timeShow, 1);
-}, 300);
+  // 11:30:05pm 23th Sat
+  let time = moment().format('hh:mm:ssa  Do ddd');
+  showMsg(time, 1);
+}, 200);
 
 pythonProcess.on('message', (msg) => {
   console.log(msg);
@@ -156,6 +140,11 @@ function displayMsg(rpio, params) {
     if ((params.msg && params.msg.length > 0) || (params.lines && params.lines.length > 0)) {
       let message = new Message(params);
       checkAndAddMsgToDisplayLoop(message);
+      let messageInterlude = new Message({
+        msg: ' ',
+        duration: 1
+      });
+      displayMessages.push(messageInterlude);
       return message;
     } else {
       return {
