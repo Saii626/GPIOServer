@@ -2,7 +2,7 @@
   "name": "gpioserver",
   "version": "1.0.0",
   "description": "Node Server for controlling raspberry's gpio",
-  "main": "index.js",
+  "main": "server/gpioserver.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -28,7 +28,19 @@
     "rpio": "^0.9.23"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-nodemon": "^2.4.2"
+    "nodemon": "^1.18.9"
+  },
+  "nodemonConfig": {
+    "verbose": true,
+    "ignore": [
+      "public/*",
+      "node_modules/*"
+    ],
+    "watch": ["server/"],
+    "events": {
+      "start": "notify-send GPIOServer \"Server started\"",
+      "crash": "notify-send GPIOServer\"Server crashed\"",
+      "exit": "notify-send GPIOServer\"Server stopped\""
+    }
   }
 }
