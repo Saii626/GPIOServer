@@ -23,8 +23,7 @@ var scripts = [];
 const scriptFolder = path.join(__dirname, './scripts');
 fs.readdir(scriptFolder, (err, files) => {
   if (err) {
-    console.error("Fatal error");
-    console.log(err);
+    console.error(err);
     return;
   }
 
@@ -50,14 +49,13 @@ app.post('/:script/:action', (req, res) => {
   res.send('No script found');
 });
 
-app.get('/:script/:action', (req, res) => {
+app.get('/:script/:action/', (req, res) => {
   for (let script of scripts) {
     if (script.file === req.params.script) {
-      res.send(script.exec[req.params.action](rpio, {}));
+      res.send(script.exec[req.params.action](rpio, req.query));
       return;
     }
   }
-
   res.send('No script found');
 });
 
