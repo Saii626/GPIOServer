@@ -32,7 +32,9 @@ fs.readdir(scriptFolder, (err, files) => {
     if (stat.isFile() && file.slice(-2) == 'js') {
       scripts.push({
         file: file.substring(0, file.length - 3),
-        exec: require('./scripts/' + file)
+        exec: require('./scripts/' + file)({
+          isMock: (process.env.NODE_ENV !== 'production') ? true : false
+        })
       });
     }
   }

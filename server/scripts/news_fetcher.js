@@ -1,6 +1,7 @@
 const request = require('request');
 
-let interval = 2 // minutes
+let interval = 3 // minutes
+getNews();
 let newsFetchLoop = setInterval(getNews, interval * 1000 * 60); // Producer
 
 function setFetchRate(rpio, params) {
@@ -22,7 +23,7 @@ let newsList = []; // Resource
 
 function getNews() {
   const options = {
-    url: 'https://newsapi.org/v2/top-headlines?country=in&pageSize=100',
+    url: 'https://newsapi.org/v2/top-headlines?country=in&pageSize=50',
     method: 'GET',
     headers: {
       authorization: 'fd5cae3f615841cf9e13b5dd7fbc0ef6'
@@ -53,7 +54,8 @@ function showNews() {
 
     let postData = {
       msg: newsToShow.news,
-      duration: 4
+      duration: 4,
+      priority: 'LOW'
     }
     request.post('http://localhost:8040/lcd/displayMsg', {
       json: postData
@@ -70,7 +72,9 @@ function showNews() {
 
 showNews();
 
-module.exports = {
-  setFetchRate: setFetchRate,
-  getNews: getNews
+module.exports = (params) => {
+  return {
+    setFetchRate: setFetchRate,
+    getNews: getNews
+  }
 }
