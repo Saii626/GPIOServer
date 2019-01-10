@@ -44,8 +44,10 @@ function info() {
   }
 }
 
-module.exports = {
-  start: start,
-  stop: stop,
-  info: info
+module.exports = (options) => {
+  return {
+    start: start,
+    stop: stop,
+    info: info
+  }
 }
