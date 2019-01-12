@@ -61,6 +61,16 @@ app.get('/:script/:action/', (req, res) => {
   res.send('No script found');
 });
 
+app.get('/:script', (req, res) => {
+  for (let script of scripts) {
+    if (script.file === req.params.script) {
+      res.send(Object.keys(script.exec));
+      return;
+    }
+  }
+  res.send('No script found');
+});
+
 function registerSelf() {
   const postData = {
     path: 'gpio',
