@@ -1,6 +1,7 @@
 const pythonShell = require('python-shell');
 const path = require('path');
 const request = require('request');
+const fs = require('fs');
 
 var options = {
   mode: 'json',
@@ -9,13 +10,14 @@ var options = {
 }
 
 var isMock = true;
+const Resources = require('../resources.js')(isMock);
 
 var currentHealth = {
   status: 'healthy',
   error: null
 };
 
-var currentData = {
+let currentData = {
   time: 0,
   temperature: 0,
   humidity: 0
@@ -50,6 +52,31 @@ function initialize() {
     });
   }
 }
+
+// Storing data to harddisk every 5 mins
+function storeData() {
+  fs.access(Resources.dh11_fileLocation, fs.constants.F_OK, (err) => {
+    if (err) {
+      fs.open(Resources.dh11_fileLocation, 'w', (err, fd) => {
+        if (err) {
+          console.error(err);
+          return
+        }
+        fs.write(fd, 'timestamp,temperature,humidity\n', (err, written, str) => {
+          if (err) {
+            console.error(err);
+          }
+        })
+      })
+    }
+  });
+  fs.appendFile(Resources.dh11_fileLocation, `${currentData.time},${currentData.temperature},${currentData.humidity}\n`, (err) => {
+    console.log(err);
+  });
+
+  setTimeout(storeData, 1000);
+}
+storeData();
 
 function health() {
   return currentHealth;

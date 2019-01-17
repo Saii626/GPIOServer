@@ -36,7 +36,9 @@
       "public/*",
       "node_modules/*"
     ],
-    "watch": ["server/"],
+    "watch": [
+      "server/"
+    ],
     "events": {
       "start": "notify-send GPIOServer \"Server started\"",
       "crash": "notify-send GPIOServer\"Server crashed\"",
