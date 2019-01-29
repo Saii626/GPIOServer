@@ -17,7 +17,8 @@ while True:
     result = instance.read()
     if result.is_valid():
         data = {}
-        data['time'] = time.time()
+        data['time'] = str(time.strftime(
+            "%D %H:%M:%S", time.localtime(time.time())))
         data['temperature'] = result.temperature
         data['humidity'] = result.humidity
         print(json.dumps(data))
