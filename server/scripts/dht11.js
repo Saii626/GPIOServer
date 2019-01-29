@@ -10,7 +10,6 @@ var options = {
 }
 
 var isMock = true;
-const Resources = require('../resources.js')(isMock);
 
 var currentHealth = {
   status: 'healthy',
@@ -25,7 +24,10 @@ let currentData = {
 
 let pythonProcess;
 
+let Resources = null;
+
 function initialize() {
+  Resources = require('../resources.js')(isMock);
   if (!isMock) {
     pythonProcess = pythonShell.PythonShell.run('dht11_interface.py', options, (err) => {
       if (err) {
@@ -55,6 +57,11 @@ function initialize() {
 
 // Storing data to harddisk every 5 mins
 function storeData() {
+  if (currentData.temperature == 0 && currentData.humidity == 0) {
+    setTimeout(storeData, 2000); // Data not initialized. Retry after 2 seconds
+    return;
+  }
+
   fs.access(Resources.dh11_fileLocation, fs.constants.F_OK, (err) => {
     if (err) {
       fs.open(Resources.dh11_fileLocation, 'w', (err, fd) => {
@@ -74,7 +81,7 @@ function storeData() {
     console.log(err);
   });
 
-  setTimeout(storeData, 1000);
+  setTimeout(storeData, 1000 * 60 * 5); // Store after 5 mins
 }
 storeData();
 
@@ -99,6 +106,7 @@ module.exports = (params) => {
   return {
     health: health,
     data: data,
+    dataFile: Resources.dh11_fileLocation,
     info: info
   }
 }

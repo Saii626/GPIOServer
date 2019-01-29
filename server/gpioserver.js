@@ -51,6 +51,22 @@ app.post('/:script/:action', (req, res) => {
   res.send('No script found');
 });
 
+app.get('/download/:script/data'), (req, res) => {
+  let targetScript = scripts.find((s) => {
+    return s.file === req.params.script;
+  });
+
+  if (targetScript) {
+    if (Object.keys(targetScript.exec).indexOf('dataFile') !== -1) {
+      res.download(targetScript.dataFile);
+    } else {
+      res.send('No datafile for the script')
+    }
+  } else {
+    res.send('No script found');
+  }
+}
+
 app.get('/:script/:action/', (req, res) => {
   for (let script of scripts) {
     if (script.file === req.params.script) {
